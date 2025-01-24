@@ -1,7 +1,10 @@
-# Imports for Dash and Dash.html
-from dash import Dash, html
+import pathlib
+# Imports for Dash and Dash.html and dcc
+from dash import Dash, html, dcc
 # Import Dash Bootstrap
 import dash_bootstrap_components as dbc
+# Add an import to import the line_chart function
+from charts import line_chart
 
 # Variable that defines the meta tag for the viewport
 meta_tags = [
@@ -16,12 +19,15 @@ external_stylesheets = [dbc.themes.BOOTSTRAP]
 app = Dash(__name__, external_stylesheets=external_stylesheets,
            meta_tags=meta_tags,)
 
+# Create the Plotly Express line chart object, e.g. to show number of sports
+line_fig = line_chart("sports")
+
 # Defining variables for each row
 # Row 1
 row_one = dbc.Row([
     dbc.Col([html.H1("Paralympics Data Analytics"),
-    html.P("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent congue luctus elit nec gravida.")
-    ], width=12),
+             html.P("""Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Praesent congue luctus elit nec gravida.""")], width=12)
 ])
 
 # Row 2
@@ -80,7 +86,9 @@ app.layout = dbc.Container([
     row_one,
     row_two,
     row_three,
-    row_four
+    row_four,
+    # Add the chart to the layout
+    dcc.Graph(id="line-chart", figure=line_fig)
 ])
 
 # Run the app
