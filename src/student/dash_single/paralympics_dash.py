@@ -3,8 +3,9 @@ import pathlib
 from dash import Dash, html, dcc
 # Import Dash Bootstrap
 import dash_bootstrap_components as dbc
-# Add an import to import the line_chart function
-from charts import line_chart
+from charts import line_chart, bar_gender, scatter_geo, create_card
+# from dash_single.figures import scatter_geo
+
 
 # Variable that defines the meta tag for the viewport
 meta_tags = [
@@ -21,6 +22,15 @@ app = Dash(__name__, external_stylesheets=external_stylesheets,
 
 # Create the Plotly Express line chart object, e.g. to show number of sports
 line_fig = line_chart("sports")
+
+# Create the Plotly Express bar chart object
+bar_fig = bar_gender("summer")  # Insert 'winter' or 'summer'
+
+# Create the scatter map
+map = scatter_geo()
+
+# Create a card variable
+card = create_card("Barcelona 1992")
 
 # Defining variables for each row
 # Row 1
@@ -78,6 +88,7 @@ row_four = dbc.Row([
             html.P("Number of sports: XX", className="card-text", ),
             ]),
     ], style={"width": "18rem"},)], width=4),
+    dbc.Col(children=[card], id='card', width=4)
 ])
 
 # Wrap the layout in a Bootstrap container
@@ -87,8 +98,11 @@ app.layout = dbc.Container([
     row_two,
     row_three,
     row_four,
-    # Add the chart to the layout
-    dcc.Graph(id="line-chart", figure=line_fig)
+    # Add the line chart to the layout
+    dcc.Graph(id="line-chart", figure=line_fig),
+    # Add the bar chart to the layout
+    dcc.Graph(id="bar-chart", figure=bar_fig),
+    dcc.Graph(id="geo-scatter", figure=map)
 ])
 
 # Run the app
