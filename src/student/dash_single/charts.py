@@ -139,7 +139,7 @@ def create_card(host_year):
     # See https://www.w3schools.com/python/python_strings_slicing.asp
     # The last 4 digits are the year
     year = host_year[-4:] # add code in the brackets to get a slice of the string
-    # Drop the last 5 digits (a space followed by the year) to the host city 
+    # Drop the last 5 digits (a space followed by the year) to the host city
     host = host_year[:-5] # add code in the brackets to get a slice of the string
     
     # Read the data into a DataFrame from the SQLite database
@@ -152,7 +152,7 @@ def create_card(host_year):
 
         # Variables for the card contents, the first is done for you as an example
         logo_path = f'logos/{year}_{host}.jpg'
-        highlights = f'{event_df['highlights'].item()} highlights'
+        highlights = f'{event_df['highlights'].item()}'
         participants = f'{event_df['participants'].item()} athletes'
         events = f'{event_df['events'].item()} events'
         countries = f'{event_df['countries'].item()} participating teams'

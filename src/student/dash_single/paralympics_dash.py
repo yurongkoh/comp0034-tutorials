@@ -1,10 +1,11 @@
 import pathlib
 # Imports for Dash and Dash.html and dcc
-from dash import Dash, html, dcc
+from dash import Dash, html, dcc, Input, Output
 # Import Dash Bootstrap
 import dash_bootstrap_components as dbc
-from charts import line_chart, bar_gender, scatter_geo, create_card
-# from dash_single.figures import scatter_geo
+from student.dash_single.charts import line_chart, bar_gender, scatter_geo, create_card
+import os
+from selenium.webdriver.chrome.options import Options
 
 
 # Variable that defines the meta tag for the viewport
@@ -35,7 +36,7 @@ card = create_card("Barcelona 1992")
 # Defining variables for each row
 # Row 1
 row_one = dbc.Row([
-    dbc.Col([html.H1("Paralympics Data Analytics"),
+    dbc.Col([html.H1("Paralympics Dashboard"),
              html.P("""Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Praesent congue luctus elit nec gravida.""")], width=12)
 ])
@@ -66,30 +67,15 @@ row_two = dbc.Row([
 
 # Row 3
 row_three = dbc.Row([
-    dbc.Col([html.Img(src=app.get_asset_url('line-chart-placeholder.png'),
-             className="img-fluid")], width=6),
-    dbc.Col([html.Img(src=app.get_asset_url('bar-chart-placeholder.png'),
-             className="img-fluid")], width=6),
-])
+    dbc.Col(children=[dcc.Graph(id="line-chart", figure=line_fig), ], width=6),
+    dbc.Col(children=[], id='bar-div', width=6),
+], align="start")
 
 # Row 4
 row_four = dbc.Row([
-    dbc.Col([html.Img(src=app.get_asset_url('line-chart-placeholder.png'),
-             className="img-fluid")], width=8),
-
-
-    dbc.Col([dbc.Card([
-        dbc.CardImg(src=app.get_asset_url("logos/2022_Beijing.jpg"), top=True),
-        dbc.CardBody([
-            html.H4("Beijing 2022", className="card-title"),
-            html.P("Number of athletes: XX", className="card-text", ),
-            html.P("Number of events: XX", className="card-text", ),
-            html.P("Number of countries: XX", className="card-text", ),
-            html.P("Number of sports: XX", className="card-text", ),
-            ]),
-    ], style={"width": "18rem"},)], width=4),
-    dbc.Col(children=[card], id='card', width=4)
-])
+    dbc.Col(children=[dcc.Graph(id='map', figure=map)], width=8),
+    dbc.Col(children=[card], id='card', width=4),
+], align="start")
 
 # Wrap the layout in a Bootstrap container
 app.layout = dbc.Container([
@@ -98,12 +84,69 @@ app.layout = dbc.Container([
     row_two,
     row_three,
     row_four,
-    # Add the line chart to the layout
-    dcc.Graph(id="line-chart", figure=line_fig),
-    # Add the bar chart to the layout
-    dcc.Graph(id="bar-chart", figure=bar_fig),
-    dcc.Graph(id="geo-scatter", figure=map)
+    # # Add the line chart to the layout
+    # dcc.Graph(id="line-chart", figure=line_fig),
+    # # Add the bar chart to the layout
+    # dcc.Graph(id="bar-chart", figure=bar_fig),
+    # dcc.Graph(id="geo-scatter", figure=map)
 ])
+
+
+@app.callback(
+    Output(component_id='line-chart', component_property='figure'),
+    Input(component_id='dropdown-input', component_property='value')
+)
+def update_line_chart(feature):
+    figure = line_chart(feature)
+    return figure
+
+
+@app.callback(
+    Output(component_id='bar-div', component_property='children'),
+    Input(component_id='checklist-input', component_property='value')
+)
+def update_bar_chart(selected_values):
+    """ Updates the bar chart based on the checklist selection.
+     Creates one chart for each of the selected values.
+     """
+    figures = []
+    # Iterate the list of values from the checkbox component
+    for value in selected_values:
+        fig = bar_gender(value)
+        # Assign id to be used to identify the charts
+        id = f"bar-chart-{value}"
+        element = dcc.Graph(figure=fig, id=id)
+        figures.append(element)
+    return figures
+
+
+@app.callback(
+    Output('card', 'children'),
+    Input('map', 'hoverData'),
+)
+def display_card(hover_data):
+    if not hover_data:
+        return
+    text = hover_data['points'][0]['hovertext']
+    if text is not None:
+        return create_card(text)
+
+
+def pytest_setup_options():
+    """pytest extra command line arguments for running chrome driver
+
+     For GitHub Actions or similar container you need to run it headless.
+     When writing the tests and running locally it may be useful to
+     see the browser and so you need to see the browser.
+    """
+    options = Options()
+    if "GITHUB_ACTIONS" in os.environ:
+        options.add_argument("--disable-gpu")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--headless")
+    else:
+        options.add_argument("start-maximized")
+    return options
 
 # Run the app
 if __name__ == '__main__':
