@@ -36,7 +36,7 @@ card = create_card("Barcelona 1992")
 # Defining variables for each row
 # Row 1
 row_one = dbc.Row([
-    dbc.Col([html.H1("Paralympics Dashboard"),
+    dbc.Col([html.H1("Paralympics Data Analytics"),
              html.P("""Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                     Praesent congue luctus elit nec gravida.""")], width=12)
 ])
@@ -125,12 +125,13 @@ def update_bar_chart(selected_values):
     Input('map', 'hoverData'),
 )
 def display_card(hover_data):
-    if not hover_data:
-        return
+    if hover_data is None:
+        return create_card("No data")
     text = hover_data['points'][0]['hovertext']
     if text is not None:
         return create_card(text)
-
+    return create_card("No data")
+    
 
 def pytest_setup_options():
     """pytest extra command line arguments for running chrome driver
