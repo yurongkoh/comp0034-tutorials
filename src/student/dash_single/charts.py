@@ -141,7 +141,7 @@ def create_card(host_year):
     year = host_year[-4:] # add code in the brackets to get a slice of the string
     # Drop the last 5 digits (a space followed by the year) to the host city
     host = host_year[:-5] # add code in the brackets to get a slice of the string
-    
+
     # Read the data into a DataFrame from the SQLite database
     path = pathlib.Path(__file__).parent.parent.joinpath("data", "paralympics.db")
     conn = sqlite3.connect(path)

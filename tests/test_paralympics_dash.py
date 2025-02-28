@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-# driver = webdriver.Chrome()
+driver = webdriver.Chrome()
 
 # Implicit wait for 2 seconds
 # driver.implicitly_wait(2)
