@@ -1,1 +1,11 @@
-<p>Welcome to HTML!</p>
+{% extends 'layout.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    {% if name %}
+        <p>Hello {{ name }} and welcome to the paralympics app.</p>
+    {% else %}
+        <p>This is the {{ self.title() }} page.</p>
+    {% endif %}
+{% endblock %}
