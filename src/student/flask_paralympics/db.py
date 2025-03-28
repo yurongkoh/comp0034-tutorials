@@ -9,7 +9,6 @@ from datetime import datetime
 import click
 from flask import current_app, g
 
-
 # Copied from https://flask.palletsprojects.com/en/stable/tutorial/database/
 def get_db():
     if 'db' not in g:
@@ -41,7 +40,7 @@ def close_db(e=None):
 def init_db():
     db = get_db()
 
-    with importlib.resources.path('tutor.data', 'paralympics.sql') as sql_path:
+    with importlib.resources.path('student.data', 'paralympics.sql') as sql_path:
         with current_app.open_resource(str(sql_path)) as f:
             db.executescript(f.read().decode('utf8'))
 
